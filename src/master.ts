@@ -34,8 +34,9 @@ export const ALL_MARKETS = [...Object.keys(DOMESTIC), ...Object.keys(OVERSEAS)];
 type Row = [string, string, string, string | null];
 
 function openDb(): DatabaseSync {
-  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-  const db = new DatabaseSync(DB_PATH);
+  const dbPath = process.env["KIS_MCP_DB_PATH"] ?? DB_PATH;
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  const db = new DatabaseSync(dbPath);
   db.exec(`
     CREATE TABLE IF NOT EXISTS stocks (
       code     TEXT NOT NULL,
@@ -88,7 +89,7 @@ function decode(buf: Buffer): string {
   }
 }
 
-function parseDomestic(raw: Buffer, market: string, offset: number): Row[] {
+export function parseDomestic(raw: Buffer, market: string, offset: number): Row[] {
   const rows: Row[] = [];
   for (const line of decode(raw).split("\n")) {
     if (line.length <= 21 + offset) continue;
@@ -99,7 +100,7 @@ function parseDomestic(raw: Buffer, market: string, offset: number): Row[] {
   return rows;
 }
 
-function parseOverseas(raw: Buffer, exchange: string): Row[] {
+export function parseOverseas(raw: Buffer, exchange: string): Row[] {
   const rows: Row[] = [];
   for (const line of decode(raw).split("\n")) {
     const cols = line.split("\t");

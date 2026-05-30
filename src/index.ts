@@ -11,6 +11,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { fetch } from "undici";
+import { fileURLToPath } from "node:url";
 import * as master from "./master.js";
 
 const REAL_URL = "https://openapi.koreainvestment.com:9443";
@@ -24,7 +25,7 @@ interface TokenEntry {
 }
 const tokenCache: Record<string, TokenEntry> = {};
 
-function getCredentials(env: string): {
+export function getCredentials(env: string): {
   appKey: string;
   appSecret: string;
   accountNo: string;
@@ -127,7 +128,7 @@ async function apiPost(env: string, apiPath: string, trId: string, body: Record<
   return resp.json() as Promise<ApiData>;
 }
 
-function checkResponse(data: ApiData, ctx: string): string {
+export function checkResponse(data: ApiData, ctx: string): string {
   if (data["rt_cd"] !== "0") {
     return `Error [${data["msg_cd"] ?? "UNKNOWN"}]: ${data["msg1"] ?? "알 수 없는 오류"} (context: ${ctx})`;
   }
@@ -746,5 +747,7 @@ server.tool(
 
 // ─── 진입점 ───────────────────────────────────────────────────────────────────
 
-const transport = new StdioServerTransport();
-await server.connect(transport);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+}
