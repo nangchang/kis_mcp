@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[oc]
+build/
+wheels/
+*.egg-info
+.venv
+
+# Node / TypeScript
+node_modules/
+dist/

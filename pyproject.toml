@@ -1,0 +1,14 @@
+[project]
+name = "koreainvestment-mcp"
+version = "0.1.0"
+description = "한국투자증권 KIS Developers Open API MCP Server"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.27.2",
+    "pydantic>=2.13.4",
+]
+
+[project.scripts]
+kis-mcp = "main:mcp.run"
