@@ -47,7 +47,7 @@ function baseUrl(env: string): string {
   return env === "real" ? REAL_URL : PAPER_URL;
 }
 
-async function getAccessToken(env: string): Promise<string> {
+export async function getAccessToken(env: string): Promise<string> {
   const cached = tokenCache[env];
   if (cached && cached.expiresAt - Date.now() / 1000 > 300) return cached.token;
 
@@ -92,7 +92,7 @@ async function buildHeaders(env: string, trId: string, trCont = ""): Promise<Rec
 
 type ApiData = Record<string, unknown>;
 
-async function apiGet(
+export async function apiGet(
   env: string,
   apiPath: string,
   trId: string,
